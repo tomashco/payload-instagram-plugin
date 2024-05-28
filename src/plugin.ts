@@ -4,6 +4,7 @@ import { onInitExtension } from './onInitExtension'
 import type { PluginTypes } from './types'
 import AfterDashboard from './components/AfterDashboard'
 import newCollection from './newCollection'
+import axios from 'axios'
 
 type PluginType = (pluginOptions: PluginTypes) => Plugin
 
@@ -39,12 +40,32 @@ export const samplePlugin =
     config.endpoints = [
       ...(config.endpoints || []),
       {
-        path: '/custom-endpoint',
+        path: '/instagram-list',
         method: 'get',
         handler: async req => {
-          return new Response(JSON.stringify({ message: 'Here is a custom endpoint' }), {
-            status: 200,
-          })
+          if (req.user) {
+            const response = await axios
+              .get(
+                `https://graph.instagram.com/me/media?fields=id,media_url,permalink,media_type,caption&access_token=${process.env.INSTAGRAM_ACCESS_TOKEN}&limit=25`,
+              )
+              .then(res => res.data)
+            return new Response(
+              JSON.stringify({
+                data: response.data,
+                paging: {
+                  before: response.paging.cursors.before,
+                  after: response.paging.cursors.after,
+                },
+              }),
+              {
+                status: 200,
+              },
+            )
+          } else {
+            return new Response(JSON.stringify({ message: 'You are not logged in' }), {
+              status: 401,
+            })
+          }
         },
       },
       // Add additional endpoints here

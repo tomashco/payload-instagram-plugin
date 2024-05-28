@@ -6,20 +6,26 @@ import axios from 'axios'
 
 import './index.scss'
 
-// Create a client
 const queryClient = new QueryClient()
 
-// const baseClass = 'after-dashboard'
-
 function Posts() {
-  const { isPending, error, data, isFetching } = useQuery({
+  const {
+    isPending,
+    error,
+    data: response,
+    isFetching,
+  } = useQuery<{
+    data: {
+      id: string
+      media_type: string
+      media_url: string
+      permalink: string
+      caption: string
+    }[]
+    paging: { before: string; after: string }
+  }>({
     queryKey: ['IGPostsList'],
-    queryFn: () =>
-      axios
-        .get(
-          `https://graph.instagram.com/me/media?fields=id,media_url,permalink,media_type,caption&access_token={{accessToken}}&limit=25`,
-        )
-        .then(res => res.data),
+    queryFn: () => axios.get(`/api/instagram-list`).then(res => res.data),
   })
 
   if (isPending) return 'Loading...'
@@ -27,55 +33,24 @@ function Posts() {
   if (error) return 'An error has occurred: ' + error.message
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        gap: '10px',
-        flexWrap: 'wrap',
-        // gridAutoRows: 'minmax(100px, 30%)',
-      }}
-    >
-      {/* @ts-expect-error */}
-      {data?.data?.map(({ id, media_type, media_url, permalink, caption }) => (
-        <div
-          style={{
-            width: '30%',
-            padding: '1rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1rem',
-            boxShadow: '0 0 10px rgba(0,0,0,0.1)',
-            borderRadius: '5px',
-          }}
-        >
+    <div style={postsContainerStyle}>
+      {response?.data?.map(({ id, media_type, media_url, permalink, caption }) => (
+        <div style={cardStyle}>
           {(media_type === 'CAROUSEL_ALBUM' || media_type === 'IMAGE') && <img src={media_url} />}
-          <p>
+          <p style={zeroMarginStyle}>
             <b>media id: </b>
             {id}
           </p>
-          <p
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              lineHeight: '1.2em',
-              height: '1.2em',
-            }}
-          >
-            <b>Link to post: </b>
-            <a href={permalink}>{permalink}</a>
+          <p style={zeroMarginStyle}>
+            <a href={permalink}>
+              <b>Link to post</b>
+            </a>
           </p>
-          <p
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              lineHeight: '1.2em',
-              height: '1.2em',
-            }}
-          >
-            <b>{media_type}: </b>
-            <a href={media_url}>{media_url}</a>
+          <p style={zeroMarginStyle}>
+            <a href={media_url}>
+              <b>Link to {media_type}</b>
+            </a>
           </p>
-          {/* <p dangerouslySetInnerHTML={{ __html: caption }} /> */}
           <p>{caption}</p>
         </div>
       ))}
@@ -101,6 +76,27 @@ const AfterDashboard: React.FC = () => {
       </div>
     </QueryClientProvider>
   )
+}
+
+const postsContainerStyle: React.CSSProperties = {
+  display: 'flex',
+  gap: '10px',
+  flexWrap: 'wrap',
+}
+const cardStyle: React.CSSProperties = {
+  width: '30%',
+  flexGrow: 1,
+  padding: '1rem',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1rem',
+  boxShadow: '0 0 10px rgba(0,0,0,0.1)',
+  borderRadius: '5px',
+  maxHeight: '600px',
+  overflow: 'scroll',
+}
+const zeroMarginStyle: React.CSSProperties = {
+  margin: 0,
 }
 
 export default AfterDashboard
