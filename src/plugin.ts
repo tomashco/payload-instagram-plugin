@@ -44,17 +44,18 @@ export const samplePlugin =
         method: 'get',
         handler: async req => {
           if (req.user) {
-            const response = await axios
-              .get(
-                `https://graph.instagram.com/me/media?fields=id,media_url,permalink,media_type,caption&access_token=${process.env.INSTAGRAM_ACCESS_TOKEN}&limit=25`,
-              )
-              .then(res => res.data)
+            const { before, after } = req.query
+            const endpoint = `https://graph.instagram.com/me/media?fields=id,media_url,permalink,media_type,caption&access_token=${
+              process.env.INSTAGRAM_ACCESS_TOKEN
+            }&limit=6${before ? `&before=${before}` : ''}${after ? `&after=${after}` : ''}`
+
+            const response = await axios.get(endpoint).then(res => res.data)
             return new Response(
               JSON.stringify({
                 data: response.data,
                 paging: {
-                  before: response.paging.cursors.before,
-                  after: response.paging.cursors.after,
+                  before: response?.paging?.cursors?.before,
+                  after: response?.paging?.cursors?.after,
                 },
               }),
               {

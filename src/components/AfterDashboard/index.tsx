@@ -2,70 +2,137 @@
 import React from 'react'
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { Button } from '@payloadcms/ui/elements/Button'
+import ReactPlayer from 'react-player'
 import axios from 'axios'
 
 import './index.scss'
 
 const queryClient = new QueryClient()
 
+type ResponseType = {
+  data: {
+    id: string
+    media_type: string
+    media_url: string
+    permalink: string
+    caption: string
+  }[]
+  paging: { before: string; after: string }
+}
+
+const LoadingCards = () =>
+  Array(6)
+    .fill(0)
+    .map(() => <div style={cardStyle} />)
+
+const baseEndpoint = '/api/instagram-list/'
+
 function Posts() {
+  const [endpoint, setEndpoint] = React.useState<string>(baseEndpoint)
+  const [first, setFirst] = React.useState<string>('')
+
   const {
     isPending,
     error,
     data: response,
     isFetching,
-  } = useQuery<{
-    data: {
-      id: string
-      media_type: string
-      media_url: string
-      permalink: string
-      caption: string
-    }[]
-    paging: { before: string; after: string }
-  }>({
-    queryKey: ['IGPostsList'],
-    queryFn: () => axios.get(`/api/instagram-list`).then(res => res.data),
+    // refetch,
+  } = useQuery<ResponseType>({
+    queryKey: [endpoint],
+    queryFn: () =>
+      axios.get(endpoint).then(res => {
+        if (endpoint === baseEndpoint) setFirst(res?.data?.paging?.before)
+        return res.data
+      }),
+    staleTime: 1000 * 60 * 5,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   })
 
-  if (isPending) return 'Loading...'
+  // if ()
+  //   return (
+  //     <div style={postsContainerStyle}>
+  //       <LoadingCards />
+  //     </div>
+  //   )
 
   if (error) return 'An error has occurred: ' + error.message
 
   return (
-    <div style={postsContainerStyle}>
-      {response?.data?.map(({ id, media_type, media_url, permalink, caption }) => (
-        <div style={cardStyle}>
-          {(media_type === 'CAROUSEL_ALBUM' || media_type === 'IMAGE') && <img src={media_url} />}
-          <p style={zeroMarginStyle}>
-            <b>media id: </b>
-            {id}
-          </p>
-          <p style={zeroMarginStyle}>
-            <a href={permalink}>
-              <b>Link to post</b>
-            </a>
-          </p>
-          <p style={zeroMarginStyle}>
-            <a href={media_url}>
-              <b>Link to {media_type}</b>
-            </a>
-          </p>
-          <p>{caption}</p>
-        </div>
-      ))}
-      <div>{isFetching ? 'Updating...' : ''}</div>
-      <ReactQueryDevtools initialIsOpen />
-    </div>
+    <>
+      <div style={postsContainerStyle}>
+        {!isPending && !isFetching && Array.isArray(response.data) ? (
+          response?.data?.map(({ id, media_type, media_url, permalink, caption }) => (
+            <div style={cardStyle}>
+              {(media_type === 'CAROUSEL_ALBUM' || media_type === 'IMAGE') && (
+                <img src={media_url} />
+              )}
+              {media_type === 'VIDEO' && (
+                <ReactPlayer controls={true} width={'100%'} url={media_url} />
+              )}
+              <p style={zeroMarginStyle}>
+                <b>media id: </b>
+                {id}
+              </p>
+              <p style={zeroMarginStyle}>
+                <a href={permalink}>
+                  <b>Link to post</b>
+                </a>
+              </p>
+              <p style={zeroMarginStyle}>
+                <a href={media_url}>
+                  <b>Link to {media_type}</b>
+                </a>
+              </p>
+              <p>{caption}</p>
+            </div>
+          ))
+        ) : (
+          <LoadingCards />
+        )}
+      </div>
+      <div style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+        <Button
+          disabled={!response?.paging?.before || response?.paging?.before === first}
+          onClick={() => {
+            setEndpoint(
+              `/api/instagram-list/${
+                response?.paging?.before ? `?before=${response?.paging?.before}` : ''
+              }`,
+            )
+          }}
+        >
+          Previous
+        </Button>
+        <Button
+          onClick={() => {
+            setEndpoint('/api/instagram-list/')
+          }}
+        >
+          Reset
+        </Button>
+        <Button
+          disabled={!response?.paging?.after}
+          onClick={() => {
+            setEndpoint(
+              `/api/instagram-list/${
+                response?.paging?.after ? `?after=${response?.paging?.after}` : ''
+              }`,
+            )
+          }}
+        >
+          Next
+        </Button>
+      </div>
+    </>
   )
 }
 
 const AfterDashboard: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <div
-      //  className={baseClass}
-      >
+      <div>
         <h4>Instagram posts</h4>
         <h5>
           This Plugin allows you to import Instagram Posts into Payload and use them as regular
@@ -74,6 +141,7 @@ const AfterDashboard: React.FC = () => {
         <p>here is a list of your posts:</p>
         <Posts />
       </div>
+      <ReactQueryDevtools initialIsOpen />
     </QueryClientProvider>
   )
 }
@@ -92,7 +160,7 @@ const cardStyle: React.CSSProperties = {
   gap: '1rem',
   boxShadow: '0 0 10px rgba(0,0,0,0.1)',
   borderRadius: '5px',
-  maxHeight: '600px',
+  height: '400px',
   overflow: 'scroll',
 }
 const zeroMarginStyle: React.CSSProperties = {
