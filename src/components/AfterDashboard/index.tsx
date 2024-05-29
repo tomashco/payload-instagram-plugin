@@ -1,23 +1,18 @@
 'use client'
 import React from 'react'
-import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider, useMutation, useQuery } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { Button } from '@payloadcms/ui/elements/Button'
 import ReactPlayer from 'react-player'
 import axios from 'axios'
 
 import './index.scss'
+import type { PostType } from '../../types'
 
 const queryClient = new QueryClient()
 
 type ResponseType = {
-  data: {
-    id: string
-    media_type: string
-    media_url: string
-    permalink: string
-    caption: string
-  }[]
+  data: PostType[]
   paging: { before: string; after: string }
 }
 
@@ -26,7 +21,7 @@ const LoadingCards = () =>
     .fill(0)
     .map(() => <div style={cardStyle} />)
 
-const baseEndpoint = '/api/instagram-list/'
+const baseEndpoint = '/api/instagram/list/'
 
 function Posts() {
   const [endpoint, setEndpoint] = React.useState<string>(baseEndpoint)
@@ -37,7 +32,6 @@ function Posts() {
     error,
     data: response,
     isFetching,
-    // refetch,
   } = useQuery<ResponseType>({
     queryKey: [endpoint],
     queryFn: () =>
@@ -50,12 +44,25 @@ function Posts() {
     refetchOnWindowFocus: false,
   })
 
-  // if ()
-  //   return (
-  //     <div style={postsContainerStyle}>
-  //       <LoadingCards />
-  //     </div>
-  //   )
+  const { data: instagramPosts } = useQuery<{ docs: PostType[] }>({
+    queryKey: ['api/instagram-posts'],
+    queryFn: () =>
+      axios.get('api/instagram-posts').then(res => {
+        return res.data
+      }),
+  })
+
+  const { mutate } = useMutation({
+    mutationFn: (post: PostType) =>
+      axios.post('api/instagram-posts', post).then(res => {
+        if (endpoint === baseEndpoint) setFirst(res?.data?.paging?.before)
+        return res.data
+      }),
+    onSuccess: res => {
+      queryClient.invalidateQueries({ queryKey: ['api/instagram-posts'] })
+      alert(`Status: ${res.message}`)
+    },
+  })
 
   if (error) return 'An error has occurred: ' + error.message
 
@@ -65,6 +72,28 @@ function Posts() {
         {!isPending && !isFetching && Array.isArray(response.data) ? (
           response?.data?.map(({ id, media_type, media_url, permalink, caption }) => (
             <div style={cardStyle}>
+              <div style={{ position: 'absolute', top: '0', right: '1rem' }}>
+                {instagramPosts?.docs?.find(el => el.id === id) ? (
+                  <Button disabled>Already in collection</Button>
+                ) : (
+                  <Button
+                    onClick={async () => {
+                      if (media_type === 'CAROUSEL_ALBUM') {
+                        const children = await axios
+                          .get(`api/instagram/children?media_id=${id}`)
+                          .then(res => {
+                            return res.data
+                          })
+                        mutate({ id, media_type, media_url, permalink, caption, children })
+                      } else {
+                        mutate({ id, media_type, media_url, permalink, caption })
+                      }
+                    }}
+                  >
+                    Add to collection
+                  </Button>
+                )}
+              </div>
               {(media_type === 'CAROUSEL_ALBUM' || media_type === 'IMAGE') && (
                 <img src={media_url} />
               )}
@@ -97,7 +126,7 @@ function Posts() {
           disabled={!response?.paging?.before || response?.paging?.before === first}
           onClick={() => {
             setEndpoint(
-              `/api/instagram-list/${
+              `/api/instagram/list/${
                 response?.paging?.before ? `?before=${response?.paging?.before}` : ''
               }`,
             )
@@ -107,7 +136,7 @@ function Posts() {
         </Button>
         <Button
           onClick={() => {
-            setEndpoint('/api/instagram-list/')
+            setEndpoint('/api/instagram/list/')
           }}
         >
           Reset
@@ -116,7 +145,7 @@ function Posts() {
           disabled={!response?.paging?.after}
           onClick={() => {
             setEndpoint(
-              `/api/instagram-list/${
+              `/api/instagram/list/${
                 response?.paging?.after ? `?after=${response?.paging?.after}` : ''
               }`,
             )
@@ -152,6 +181,7 @@ const postsContainerStyle: React.CSSProperties = {
   flexWrap: 'wrap',
 }
 const cardStyle: React.CSSProperties = {
+  position: 'relative',
   width: '30%',
   flexGrow: 1,
   padding: '1rem',

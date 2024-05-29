@@ -40,7 +40,7 @@ export const samplePlugin =
     config.endpoints = [
       ...(config.endpoints || []),
       {
-        path: '/instagram-list',
+        path: '/instagram/list',
         method: 'get',
         handler: async req => {
           if (req.user) {
@@ -62,6 +62,28 @@ export const samplePlugin =
                 status: 200,
               },
             )
+          } else {
+            return new Response(JSON.stringify({ message: 'You are not logged in' }), {
+              status: 401,
+            })
+          }
+        },
+      },
+      {
+        path: '/instagram/children',
+        method: 'get',
+        handler: async req => {
+          const { media_id } = req.query
+          if (req.user) {
+            const { before, after } = req.query
+            const endpoint = `https://graph.instagram.com/${media_id}/children?fields=id,media_type,media_url,timestamp&access_token=${
+              process.env.INSTAGRAM_ACCESS_TOKEN
+            }&limit=6${before ? `&before=${before}` : ''}${after ? `&after=${after}` : ''}`
+
+            const response = await axios.get(endpoint).then(res => res.data)
+            return new Response(JSON.stringify(response.data), {
+              status: 200,
+            })
           } else {
             return new Response(JSON.stringify({ message: 'You are not logged in' }), {
               status: 401,
