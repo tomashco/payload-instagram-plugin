@@ -24,8 +24,8 @@
     "dev:lint": "cd dev && cross-env NODE_OPTIONS=--no-deprecation next lint",
     "generate:types": "payload generate:types",
     "lint:fix": "eslint --fix --ext .ts,.tsx src",
-    "clean": "rimraf dist && rimraf dev/yarn.lock",
-    "prepublishOnly": "yarn clean && yarn build && cd dev && yarn test"
+    "clean": "rimraf dist",
+    "prepublishOnly": "pnpm clean && pnpm build"
   },
   "author": "tomashco@gmail.com",
   "license": "MIT",
