@@ -33,7 +33,8 @@
     "@tanstack/react-query": "^5.40.0",
     "axios": "^1.7.2",
     "payload": "beta",
-    "react-player": "^2.16.0"
+    "react-player": "^2.16.0",
+    "@tanstack/react-query-devtools": "^5.40.0"
   },
   "devDependencies": {
     "@payloadcms/db-mongodb": "3.0.0-beta.36",
@@ -43,7 +44,6 @@
     "@payloadcms/ui": "3.0.0-beta.36",
     "@swc/jest": "^0.2.36",
     "@tanstack/react-query": "^5.40.0",
-    "@tanstack/react-query-devtools": "^5.40.0",
     "@types/jest": "^29.5.11",
     "@types/node": "20.12.12",
     "@types/react": "npm:types-react@19.0.0-beta.2",

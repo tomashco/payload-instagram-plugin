@@ -1,27 +1,28 @@
-import type { Config, Plugin } from 'payload/config'
+import type { Plugin } from 'payload/config'
 
 import { onInitExtension } from './onInitExtension'
 import type { PluginTypes } from './types'
-import AfterDashboard from './components/AfterDashboard'
-import newCollection from './newCollection'
+import InstagramPosts from './InstagramPosts'
+import { AfterNavLinks } from './components/AfterNavLinks'
 import axios from 'axios'
+import InstagramPostsView from './InstagramPostsView'
 
-type PluginType = (pluginOptions: PluginTypes) => Plugin
-
-export const samplePlugin =
+export const instagramPlugin =
   (pluginOptions: PluginTypes): Plugin =>
   incomingConfig => {
     let config = { ...incomingConfig }
 
     config.admin = {
       ...(config.admin || {}),
-
-      // Add additional admin config here
-
       components: {
+        afterNavLinks: [AfterNavLinks],
+        views: {
+          instagramPosts: {
+            Component: InstagramPostsView,
+            path: '/instagram-posts-view',
+          },
+        },
         ...(config.admin?.components || {}),
-        // Add additional admin components here
-        afterDashboard: [...(config.admin?.components?.afterDashboard || []), AfterDashboard],
       },
     }
 
@@ -34,7 +35,7 @@ export const samplePlugin =
     config.collections = [
       ...(config.collections || []),
       // Add additional collections here
-      newCollection, // delete this line to remove the example collection
+      InstagramPosts, // delete this line to remove the example collection
     ]
 
     config.endpoints = [

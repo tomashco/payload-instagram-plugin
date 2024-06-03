@@ -1,16 +1,22 @@
 import React from 'react'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import InstagramPostClient from './InstagramPostClient'
 
 const InstagramPost: React.FC = async () => {
   const payload = await getPayload({ config: configPromise })
-  const url = payload.getAdminURL()
-  return <>
-  <hr style={{backgroundColor: 'black', height: '1px', padding: 0}}/>
-  <h1>Instagram Post!</h1>
-  <div>The admin panel is running at: {url}</div>
-  <hr style={{backgroundColor: 'black', height: '1px', padding: 0}}/>
-  </>
+
+  const { docs: posts } = await payload.find({
+    collection: 'instagram-posts',
+  })
+  return (
+    <section className="py-10 first:mt-16">
+      <div className="prose dark:prose-invert md:prose-lg">
+        {/* @ts-expect-error */}
+        <InstagramPostClient posts={posts} />
+      </div>
+    </section>
+  )
 }
 
 export default InstagramPost

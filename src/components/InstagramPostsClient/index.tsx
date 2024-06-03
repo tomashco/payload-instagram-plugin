@@ -22,6 +22,8 @@ const LoadingCards = () =>
     .map(() => <div style={cardStyle} />)
 
 const baseEndpoint = '/api/instagram/list/'
+const childrenEndpoint = '/api/instagram/children/'
+const instagramCollectionEndpoint = '/api/instagram-posts'
 
 function Posts() {
   const [endpoint, setEndpoint] = React.useState<string>(baseEndpoint)
@@ -45,21 +47,21 @@ function Posts() {
   })
 
   const { data: instagramPosts } = useQuery<{ docs: PostType[] }>({
-    queryKey: ['api/instagram-posts'],
+    queryKey: [instagramCollectionEndpoint],
     queryFn: () =>
-      axios.get('api/instagram-posts').then(res => {
+      axios.get(instagramCollectionEndpoint).then(res => {
         return res.data
       }),
   })
 
   const { mutate } = useMutation({
     mutationFn: (post: PostType) =>
-      axios.post('api/instagram-posts', post).then(res => {
+      axios.post(instagramCollectionEndpoint, post).then(res => {
         if (endpoint === baseEndpoint) setFirst(res?.data?.paging?.before)
         return res.data
       }),
     onSuccess: res => {
-      queryClient.invalidateQueries({ queryKey: ['api/instagram-posts'] })
+      queryClient.invalidateQueries({ queryKey: [instagramCollectionEndpoint] })
       alert(`Status: ${res.message}`)
     },
   })
@@ -80,7 +82,7 @@ function Posts() {
                     onClick={async () => {
                       if (media_type === 'CAROUSEL_ALBUM') {
                         const children = await axios
-                          .get(`api/instagram/children?media_id=${id}`)
+                          .get(`${childrenEndpoint}?media_id=${id}`)
                           .then(res => {
                             return res.data
                           })
@@ -126,7 +128,7 @@ function Posts() {
           disabled={!response?.paging?.before || response?.paging?.before === first}
           onClick={() => {
             setEndpoint(
-              `/api/instagram/list/${
+              `${baseEndpoint}${
                 response?.paging?.before ? `?before=${response?.paging?.before}` : ''
               }`,
             )
@@ -136,7 +138,7 @@ function Posts() {
         </Button>
         <Button
           onClick={() => {
-            setEndpoint('/api/instagram/list/')
+            setEndpoint(baseEndpoint)
           }}
         >
           Reset
@@ -145,7 +147,7 @@ function Posts() {
           disabled={!response?.paging?.after}
           onClick={() => {
             setEndpoint(
-              `/api/instagram/list/${
+              `${baseEndpoint}${
                 response?.paging?.after ? `?after=${response?.paging?.after}` : ''
               }`,
             )
@@ -158,10 +160,10 @@ function Posts() {
   )
 }
 
-const AfterDashboard: React.FC = () => {
+const InstagramPostsClient: React.FC = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <div>
+    <div style={{ padding: '2rem' }}>
+      <QueryClientProvider client={queryClient}>
         <h4>Instagram posts</h4>
         <h5>
           This Plugin allows you to import Instagram Posts into Payload and use them as regular
@@ -169,9 +171,9 @@ const AfterDashboard: React.FC = () => {
         </h5>
         <p>here is a list of your posts:</p>
         <Posts />
-      </div>
-      <ReactQueryDevtools initialIsOpen />
-    </QueryClientProvider>
+        <ReactQueryDevtools initialIsOpen />
+      </QueryClientProvider>
+    </div>
   )
 }
 
@@ -197,4 +199,4 @@ const zeroMarginStyle: React.CSSProperties = {
   margin: 0,
 }
 
-export default AfterDashboard
+export default InstagramPostsClient

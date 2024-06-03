@@ -1,10 +1,9 @@
 import { buildConfig } from 'payload/config'
 import path from 'path'
 import Users from './collections/Users'
-import InstagramPosts from './collections/InstagramPosts'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import { samplePlugin } from '../../src/index'
+import { instagramPlugin } from '../../src/index'
 import sharp from 'sharp'
 
 export default buildConfig({
@@ -13,11 +12,11 @@ export default buildConfig({
     user: Users.slug,
   },
   editor: lexicalEditor({}),
-  collections: [InstagramPosts, Users],
+  collections: [Users],
   typescript: {
     outputFile: path.resolve(__dirname, 'payload-types.ts'),
   },
-  plugins: [samplePlugin({ enabled: true })],
+  plugins: [instagramPlugin({ enabled: true })],
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
   }),

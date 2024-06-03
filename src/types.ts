@@ -12,7 +12,12 @@ export type PostType = {
   permalink: string
   media_type: string
   caption: string
-  children?: PostType[]
+  children?: {
+    id: string
+    media_url: string
+    permalink: string
+    media_type: string
+  }[]
 }
 
 export interface NewCollectionTypes {
