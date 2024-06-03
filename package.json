@@ -24,7 +24,7 @@
     "dev:lint": "cd dev && cross-env NODE_OPTIONS=--no-deprecation next lint",
     "generate:types": "payload generate:types",
     "lint:fix": "eslint --fix --ext .ts,.tsx src",
-    "clean": "rimraf dist",
+    "clean": "rm -rf dist",
     "prepublishOnly": "pnpm clean && pnpm build"
   },
   "author": "tomashco@gmail.com",
