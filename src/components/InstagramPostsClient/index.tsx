@@ -6,7 +6,6 @@ import { Button } from '@payloadcms/ui/elements/Button'
 import ReactPlayer from 'react-player'
 import axios from 'axios'
 
-import './index.scss'
 import type { PostType } from '../../types'
 
 const queryClient = new QueryClient()
