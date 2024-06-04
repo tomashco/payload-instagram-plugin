@@ -3,7 +3,6 @@ import React from 'react'
 import { QueryClient, QueryClientProvider, useMutation, useQuery } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { Button } from '@payloadcms/ui/elements/Button'
-import ReactPlayer from 'react-player'
 import axios from 'axios'
 
 import type { PostType } from '../../types'
@@ -99,8 +98,11 @@ function Posts() {
                 <img src={media_url} />
               )}
               {media_type === 'VIDEO' && (
-                <ReactPlayer controls={true} width={'100%'} url={media_url} />
+                <video style={{ width: '100%', height: '300px' }} controls playsInline>
+                  <source src={media_url} type="video/mp4" />
+                </video>
               )}
+
               <p style={zeroMarginStyle}>
                 <b>media id: </b>
                 {id}

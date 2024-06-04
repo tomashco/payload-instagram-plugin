@@ -1,6 +1,6 @@
 {
   "name": "payload-instagram-plugin",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "homepage:": "https://github.com/tomashco/payload-instagram-plugin",
   "repository": "git@github.com:tomashco/payload-instagram-plugin.git",
@@ -32,11 +32,10 @@
   "peerDependencies": {
     "@tanstack/react-query": "^5.40.0",
     "axios": "^1.7.2",
-    "payload": "beta",
-    "react-player": "^2.16.0",
-    "@tanstack/react-query-devtools": "^5.40.0"
+    "payload": "beta"
   },
   "devDependencies": {
+    "@tanstack/react-query-devtools": "^5.40.0",
     "@payloadcms/db-mongodb": "3.0.0-beta.36",
     "@payloadcms/eslint-config": "^1",
     "@payloadcms/next": "3.0.0-beta.36",
