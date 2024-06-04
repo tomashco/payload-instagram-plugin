@@ -18,7 +18,7 @@ type ResponseType = {
 const LoadingCards = () =>
   Array(6)
     .fill(0)
-    .map(() => <div style={cardStyle} />)
+    .map((_el, ind) => <div key={ind} style={cardStyle} />)
 
 const baseEndpoint = '/api/instagram/list/'
 const childrenEndpoint = '/api/instagram/children/'
@@ -72,7 +72,7 @@ function Posts() {
       <div style={postsContainerStyle}>
         {!isPending && !isFetching && Array.isArray(response.data) ? (
           response?.data?.map(({ id, media_type, media_url, permalink, caption }) => (
-            <div style={cardStyle}>
+            <div key={id} style={cardStyle}>
               <div style={{ position: 'absolute', top: '0', right: '1rem' }}>
                 {instagramPosts?.docs?.find(el => el.id === id) ? (
                   <Button disabled>Already in collection</Button>
