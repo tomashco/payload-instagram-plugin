@@ -1,7 +1,6 @@
 'use client'
 import React from 'react'
 import { QueryClient, QueryClientProvider, useMutation, useQuery } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { Button } from '@payloadcms/ui/elements/Button'
 import axios from 'axios'
 
@@ -172,7 +171,6 @@ const InstagramPostsClient: React.FC = () => {
         </h5>
         <p>here is a list of your posts:</p>
         <Posts />
-        <ReactQueryDevtools initialIsOpen />
       </QueryClientProvider>
     </div>
   )
