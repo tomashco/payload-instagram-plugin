@@ -4,7 +4,7 @@ import { CollectionConfig } from 'payload/types'
 const InstagramPosts: CollectionConfig = {
   slug: 'instagram-posts',
   admin: {
-    useAsTitle: 'id',
+    useAsTitle: 'caption',
   },
   fields: [
     {
