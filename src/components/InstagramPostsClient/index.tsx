@@ -5,6 +5,12 @@ import { Button } from '@payloadcms/ui/elements/Button'
 import axios from 'axios'
 
 import type { PostType } from '../../types'
+import {
+  addAccessTokenEndpoint,
+  baseEndpoint,
+  childrenEndpoint,
+  instagramCollectionEndpoint,
+} from '../../plugin'
 
 const queryClient = new QueryClient()
 
@@ -18,12 +24,9 @@ const LoadingCards = () =>
     .fill(0)
     .map((_el, ind) => <div key={ind} style={cardStyle} />)
 
-const baseEndpoint = '/api/instagram/list/'
-const childrenEndpoint = '/api/instagram/children/'
-const instagramCollectionEndpoint = '/api/instagram-posts'
-
 function Posts() {
   const [endpoint, setEndpoint] = React.useState<string>(baseEndpoint)
+  const [token, setToken] = React.useState<string>('')
   const [first, setFirst] = React.useState<string>('')
 
   const {
@@ -31,6 +34,7 @@ function Posts() {
     error,
     data: response,
     isFetching,
+    isLoading,
   } = useQuery<ResponseType>({
     queryKey: [endpoint],
     queryFn: () =>
@@ -63,10 +67,53 @@ function Posts() {
     },
   })
 
+  const { mutate: addAccessToken } = useMutation({
+    mutationFn: (body: { accessToken: string }) =>
+      axios.post(addAccessTokenEndpoint, body).then(res => {
+        return res.data
+      }),
+    onSuccess: res => {
+      queryClient.invalidateQueries({ queryKey: [endpoint] })
+      alert('Status: token successfully added!')
+      setToken('')
+    },
+    onError: res => {
+      alert('Status: the token provided is not correct, try again')
+      setToken('')
+    },
+  })
+
+  const onSubmitHandler = async (evt: any) => {
+    evt.preventDefault()
+    await addAccessToken({ accessToken: token })
+  }
+
+  if (isLoading) return <p>Loading...</p>
+
+  if (axios.isAxiosError(error) && error.response?.status === 403)
+    // if (true)
+    return (
+      <form onSubmit={onSubmitHandler}>
+        <p>Please insert a valid access token: </p>
+        <div className="field-type email">
+          <input
+            className="field-type__wrap"
+            value={token}
+            onChange={evt => setToken(evt.target.value)}
+          />
+          <Button onClick={onSubmitHandler}>Add Access Token</Button>
+        </div>
+      </form>
+    )
+
+  if (error && axios.isAxiosError(error))
+    return 'An error has occurred: ' + error.response?.data.message
+
   if (error) return 'An error has occurred: ' + error.message
 
   return (
     <>
+      <p>here is a list of your posts:</p>
       <div style={postsContainerStyle}>
         {!isPending && !isFetching && Array.isArray(response.data) ? (
           response?.data?.map(({ id, media_type, media_url, permalink, caption }) => (
@@ -169,7 +216,6 @@ const InstagramPostsClient: React.FC = () => {
           This Plugin allows you to import Instagram Posts into Payload and use them as regular
           posts
         </h5>
-        <p>here is a list of your posts:</p>
         <Posts />
       </QueryClientProvider>
     </div>
