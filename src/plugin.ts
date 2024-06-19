@@ -8,9 +8,10 @@ import axios from 'axios'
 import InstagramPostsView from './InstagramPostsView'
 import { GlobalConfig, PayloadRequest } from 'payload/types'
 
-export const baseEndpoint = '/api/instagram/list/'
+export const baseEndpoint = '/api/instagram/list'
 export const addAccessTokenEndpoint = '/api/instagram/token'
-export const childrenEndpoint = '/api/instagram/children/'
+export const childrenEndpoint = '/api/instagram/children'
+export const mediaEndpoint = '/api/instagram/media'
 export const instagramCollectionEndpoint = '/api/instagram-posts'
 
 export const instagramPlugin =
