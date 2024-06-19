@@ -70,7 +70,6 @@ const InstagramPosts: CollectionConfig = {
 
         try {
           const response = await axios.get(doc?.media_url)
-          console.log('🚀 ~ response:', response.status)
           return doc
         } catch (err) {
           req.payload
@@ -79,13 +78,11 @@ const InstagramPosts: CollectionConfig = {
             .then(res => res.data)
 
           const { media_url: updatedMediaUrl }: PostType = response
-          console.log('🚀 ~ updatedMediaUrl:', updatedMediaUrl)
           let children
           if (media_type === 'CAROUSEL_ALBUM') {
             children = await axios.get(`${baseUrl}${childrenEndpoint}?media_id=${id}`).then(res => {
               return res.data
             })
-            console.log('🚀 ~ CAROUSEL_ALBUM children:', children.id)
           }
           try {
             const result = await req.payload.update({
@@ -96,9 +93,8 @@ const InstagramPosts: CollectionConfig = {
                 children,
               },
             })
-            console.log('🚀 ~ RESULT:', result?.id)
           } catch (err) {
-            console.log(err)
+            console.error(err)
           }
 
           return doc
