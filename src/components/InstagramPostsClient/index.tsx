@@ -38,10 +38,12 @@ function Posts() {
   } = useQuery<ResponseType>({
     queryKey: [endpoint],
     queryFn: () =>
-      axios.get(endpoint).then(res => {
-        if (endpoint === baseEndpoint) setFirst(res?.data?.paging?.before)
-        return res.data
-      }),
+      fetch(endpoint)
+        .then(res => res.json())
+        .then(res => {
+          if (endpoint === baseEndpoint) setFirst(res?.data?.paging?.before)
+          return res.data
+        }),
     staleTime: 1000 * 60 * 5,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
@@ -49,18 +51,21 @@ function Posts() {
 
   const { data: instagramPosts } = useQuery<{ docs: PostType[] }>({
     queryKey: [instagramCollectionEndpoint],
-    queryFn: () =>
-      axios.get(instagramCollectionEndpoint).then(res => {
-        return res.data
-      }),
+    queryFn: () => fetch(instagramCollectionEndpoint).then(res => res.json()),
   })
 
   const { mutate } = useMutation({
     mutationFn: (post: PostType) =>
-      axios.post(instagramCollectionEndpoint, post).then(res => {
-        if (endpoint === baseEndpoint) setFirst(res?.data?.paging?.before)
-        return res.data
-      }),
+      fetch(instagramCollectionEndpoint, {
+        method: 'POST',
+        body: JSON.stringify(post),
+        credentials: 'include',
+      })
+        .then(res => res.json())
+        .then(res => {
+          if (endpoint === baseEndpoint) setFirst(res?.data?.paging?.before)
+          return res.data
+        }),
     onSuccess: res => {
       queryClient.invalidateQueries({ queryKey: [instagramCollectionEndpoint] })
       alert(`Status: ${res.message}`)
@@ -69,8 +74,12 @@ function Posts() {
 
   const { mutate: addAccessToken } = useMutation({
     mutationFn: (body: { accessToken: string }) =>
-      axios.post(addAccessTokenEndpoint, body).then(res => {
-        return res.data
+      fetch(addAccessTokenEndpoint, {
+        body: JSON.stringify(body),
+        method: 'POST',
+        credentials: 'include',
+      }).then(res => {
+        return res.json()
       }),
     onSuccess: res => {
       queryClient.invalidateQueries({ queryKey: [endpoint] })
