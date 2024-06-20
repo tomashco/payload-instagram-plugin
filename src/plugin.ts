@@ -4,9 +4,8 @@ import { onInitExtension } from './onInitExtension'
 import type { PluginTypes } from './types'
 import InstagramPosts from './InstagramPosts'
 import { AfterNavLinks } from './components/AfterNavLinks'
-import axios from 'axios'
 import InstagramPostsView from './InstagramPostsView'
-import { GlobalConfig, PayloadRequest } from 'payload/types'
+import { GlobalConfig } from 'payload/types'
 
 export const baseEndpoint = '/api/instagram/list'
 export const addAccessTokenEndpoint = '/api/apikeys'
@@ -24,18 +23,24 @@ export const instagramPlugin =
         hideAPIURL: true,
       },
       access: {
-        read: async ({ req, data }) => {
+        read: async ({ req }) => {
           try {
             // if updatedAt is more than 10 days old, refresh the token
-            const currentDate = new Date()
-            const updatedAt = new Date(data.updatedAt)
+            const { updatedAt, refreshToken } = await req.payload.findGlobal({
+              slug: 'apikeys',
+              overrideAccess: true,
+              showHiddenFields: true,
+            })
 
-            if (currentDate.getTime() - 10 * 24 * 60 * 60 * 1000 < updatedAt.getTime()) {
+            const currentDate = new Date()
+            const updatedAtDate = new Date(updatedAt as unknown as string)
+
+            if (currentDate.getTime() - 10 * 24 * 60 * 60 * 1000 < updatedAtDate.getTime()) {
               return false
             }
 
             const { access_token } = await fetch(
-              `https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=${data.refreshToken}`,
+              `https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=${refreshToken}`,
             ).then(res => res.json())
 
             req.context.bypass = true
@@ -49,6 +54,7 @@ export const instagramPlugin =
                 bypass: true,
               },
             })
+            req.payload.logger.warn('token updated succesfully')
           } catch (error) {
             req.payload.logger.error('Error refreshing token', error)
           } finally {
@@ -101,12 +107,21 @@ export const instagramPlugin =
     config.endpoints = [
       ...(config.endpoints || []),
       {
-        path: '/instagram/token',
+        path: '/apikeys',
         method: 'post',
         handler: async req => {
           try {
             const body = req.json ? await req.json() : {}
             const { accessToken } = body
+
+            const test = await fetch(
+              `https://graph.instagram.com/me/media?fields=id,media_url,permalink,media_type,caption&access_token=${accessToken}&limit=6`,
+            )
+            if (!test.ok) {
+              return new Response(JSON.stringify({ message: 'Invalid token' }), {
+                status: 403,
+              })
+            }
 
             await req.payload.updateGlobal({
               slug: 'apikeys',
@@ -114,7 +129,6 @@ export const instagramPlugin =
                 refreshToken: accessToken,
               },
             })
-
             return new Response(
               JSON.stringify({
                 accessToken,
@@ -156,6 +170,7 @@ export const instagramPlugin =
               }${after ? `&after=${after}` : ''}`
 
               const response = await fetch(endpoint).then(res => res.json())
+
               return new Response(
                 JSON.stringify({
                   data: response.data,
@@ -185,9 +200,9 @@ export const instagramPlugin =
 
           const endpoint = `https://graph.instagram.com/${media_id}?fields=id,media_type,media_url,timestamp&access_token=${refreshToken}`
 
-          const response = await axios.get(endpoint)
+          const response = await fetch(endpoint).then(res => res.json())
 
-          return new Response(JSON.stringify(response.data), {
+          return new Response(JSON.stringify(response), {
             status: 200,
           })
           // }

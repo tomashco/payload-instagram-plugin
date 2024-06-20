@@ -1,7 +1,5 @@
-import axios from 'axios'
 import { CollectionConfig } from 'payload/types'
 import { childrenEndpoint, mediaEndpoint } from './plugin'
-import { PostType } from './types'
 
 // Example Collection - For reference only, this must be added to payload.config.ts to be used.
 const InstagramPosts: CollectionConfig = {
@@ -69,23 +67,27 @@ const InstagramPosts: CollectionConfig = {
           req.host === 'localhost' ? `${req.origin}:${process.env.PORT || 3000}` : req.origin
 
         try {
-          const response = await axios.get(doc?.media_url)
+          const test = await fetch(doc?.media_url).then(res => {
+            return res
+          })
+          if (!test.ok) {
+            throw new Error('media_url expired')
+          }
           return doc
         } catch (err) {
-          req.payload
-          const response = await axios
-            .get(`${baseUrl}${mediaEndpoint}?media_id=${id}`)
-            .then(res => res.data)
+          const endpoint = `${baseUrl}${mediaEndpoint}?media_id=${id}`
 
-          const { media_url: updatedMediaUrl }: PostType = response
+          const response = await fetch(endpoint).then(res => res.json())
+
+          const { media_url: updatedMediaUrl } = response
           let children
           if (media_type === 'CAROUSEL_ALBUM') {
-            children = await axios.get(`${baseUrl}${childrenEndpoint}?media_id=${id}`).then(res => {
-              return res.data
-            })
+            children = await fetch(`${baseUrl}${childrenEndpoint}?media_id=${id}`).then(res =>
+              res.json(),
+            )
           }
           try {
-            const result = await req.payload.update({
+            await req.payload.update({
               collection: 'instagram-posts',
               id,
               data: {

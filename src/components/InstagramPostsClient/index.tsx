@@ -1,8 +1,7 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { QueryClient, QueryClientProvider, useMutation, useQuery } from '@tanstack/react-query'
 import { Button } from '@payloadcms/ui/elements/Button'
-import axios from 'axios'
 
 import type { PostType } from '../../types'
 import {
@@ -38,16 +37,20 @@ function Posts() {
   } = useQuery<ResponseType>({
     queryKey: [endpoint],
     queryFn: () =>
-      fetch(endpoint)
-        .then(res => res.json())
-        .then(res => {
-          if (endpoint === baseEndpoint) setFirst(res?.data?.paging?.before)
-          return res.data
-        }),
+      fetch(endpoint).then(res => {
+        if (!res.ok) throw new Error(res.status.toString())
+        return res.json()
+      }),
     staleTime: 1000 * 60 * 5,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   })
+
+  useEffect(() => {
+    if (endpoint === baseEndpoint) {
+      setFirst(response?.paging?.before || '')
+    }
+  }, [response])
 
   const { data: instagramPosts } = useQuery<{ docs: PostType[] }>({
     queryKey: [instagramCollectionEndpoint],
@@ -57,18 +60,19 @@ function Posts() {
   const { mutate } = useMutation({
     mutationFn: (post: PostType) =>
       fetch(instagramCollectionEndpoint, {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
         method: 'POST',
         body: JSON.stringify(post),
         credentials: 'include',
-      })
-        .then(res => res.json())
-        .then(res => {
-          if (endpoint === baseEndpoint) setFirst(res?.data?.paging?.before)
-          return res.data
-        }),
+      }).then(res => {
+        return res.json()
+      }),
     onSuccess: res => {
       queryClient.invalidateQueries({ queryKey: [instagramCollectionEndpoint] })
-      alert(`Status: ${res.message}`)
+      alert(`Status: ${res?.message}`)
     },
   })
 
@@ -79,14 +83,15 @@ function Posts() {
         method: 'POST',
         credentials: 'include',
       }).then(res => {
+        if (!res.ok) throw new Error(res.status.toString())
         return res.json()
       }),
-    onSuccess: res => {
+    onSuccess: _res => {
       queryClient.invalidateQueries({ queryKey: [endpoint] })
       alert('Status: token successfully added!')
       setToken('')
     },
-    onError: res => {
+    onError: _res => {
       alert('Status: the token provided is not correct, try again')
       setToken('')
     },
@@ -99,8 +104,7 @@ function Posts() {
 
   if (isLoading) return <p>Loading...</p>
 
-  if (axios.isAxiosError(error) && error.response?.status === 403)
-    // if (true)
+  if (error?.message === '403')
     return (
       <form onSubmit={onSubmitHandler}>
         <p>Please insert a valid access token: </p>
@@ -114,9 +118,6 @@ function Posts() {
         </div>
       </form>
     )
-
-  if (error && axios.isAxiosError(error))
-    return 'An error has occurred: ' + error.response?.data.message
 
   if (error) return 'An error has occurred: ' + error.message
 
@@ -134,11 +135,11 @@ function Posts() {
                   <Button
                     onClick={async () => {
                       if (media_type === 'CAROUSEL_ALBUM') {
-                        const children = await axios
-                          .get(`${childrenEndpoint}?media_id=${id}`)
-                          .then(res => {
-                            return res.data
-                          })
+                        const children = await fetch(`${childrenEndpoint}?media_id=${id}`).then(
+                          res => {
+                            return res.json()
+                          },
+                        )
                         mutate({ id, media_type, media_url, permalink, caption, children })
                       } else {
                         mutate({ id, media_type, media_url, permalink, caption })
