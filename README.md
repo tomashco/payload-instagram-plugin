@@ -9,7 +9,7 @@ This plugin allows you to use an instagram connected feed as content to be shown
 [This tutorial](https://developers.facebook.com/docs/instagram-basic-display-api/getting-started) shows you:
 - how to create a facebook developer app;
 - how to add tester users (i.e. the account from where you will get the content);
-- how to retrieve the access token (it's important to get the long lived token with an expiration of 60 days). This plugin does not refresh the token for you, so every now and then you will have to renovate the token manually (or programmatically, any PR is welcome!);
+- how to retrieve the access token (it's important to get the long lived token with an expiration of 60 days).
 
 2. Add the access token in the Instagram Plugin page inside the admin panel.
 
