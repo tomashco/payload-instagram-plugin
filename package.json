@@ -1,6 +1,6 @@
 {
   "name": "payload-instagram-plugin",
-  "version": "0.0.9",
+  "version": "0.0.9-beta.0",
   "type": "module",
   "homepage:": "https://github.com/tomashco/payload-instagram-plugin",
   "repository": "git@github.com:tomashco/payload-instagram-plugin.git",

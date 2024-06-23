@@ -74,29 +74,34 @@ const InstagramPosts: CollectionConfig = {
             throw new Error('media_url expired')
           }
           return doc
-        } catch (err) {
-          const endpoint = `${baseUrl}${mediaEndpoint}?media_id=${id}`
-
-          const response = await fetch(endpoint).then(res => res.json())
-
-          const { media_url: updatedMediaUrl } = response
-          let children
-          if (media_type === 'CAROUSEL_ALBUM') {
-            children = await fetch(`${baseUrl}${childrenEndpoint}?media_id=${id}`).then(res =>
-              res.json(),
-            )
-          }
+        } catch (errMediaUrlExpired) {
+          console.error('MediaUrlExpired', errMediaUrlExpired)
           try {
-            await req.payload.update({
-              collection: 'instagram-posts',
-              id,
-              data: {
-                media_url: updatedMediaUrl,
-                children,
-              },
-            })
-          } catch (err) {
-            console.error(err)
+            const endpoint = `${baseUrl}${mediaEndpoint}?media_id=${id}`
+
+            const response = await fetch(endpoint).then(res => res.json())
+
+            const { media_url: updatedMediaUrl } = response
+            let children
+            if (media_type === 'CAROUSEL_ALBUM') {
+              children = await fetch(`${baseUrl}${childrenEndpoint}?media_id=${id}`).then(res =>
+                res.json(),
+              )
+            }
+            try {
+              await req.payload.update({
+                collection: 'instagram-posts',
+                id,
+                data: {
+                  media_url: updatedMediaUrl,
+                  children,
+                },
+              })
+            } catch (errUpdatingMediaUrl) {
+              console.error('UpdatingMediaUrl', errUpdatingMediaUrl)
+            }
+          } catch (errFetchEndpoint) {
+            console.error('FetchEndpointToUpdateMediaUrl', errFetchEndpoint)
           }
 
           return doc
