@@ -5,6 +5,10 @@ import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { instagramPlugin } from '../../src/index'
 import sharp from 'sharp'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || '',
