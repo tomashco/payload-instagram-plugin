@@ -1,0 +1,73 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": "../",
+    "declaration": true,
+    "declarationMap": true,
+    "target": "esnext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "allowJs": true,
+    "checkJs": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "preserve",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": false,
+    "types": [
+      "jest",
+      "node",
+      "@types/jest"
+    ],
+    "incremental": true,
+    "isolatedModules": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      // "@payloadcms/ui": [
+      //   "../packages/ui/src/exports/client/index.ts"
+      // ],
+      // "@payloadcms/ui/shared": [
+      //   "../packages/ui/src/exports/shared/index.ts"
+      // ],
+      // "@payloadcms/ui/scss": [
+      //   "../packages/ui/src/scss.scss"
+      // ],
+      // "@payloadcms/ui/scss/app.scss": [
+      //   "../packages/ui/src/scss/app.scss"
+      // ],
+      // "@payloadcms/next/*": [
+      //   "./packages/next/src/exports/*.ts"
+      // ],
+      // "@payload-config": [
+      //   "./test/fields/config.ts"
+      // ]
+      "@payload-config": [
+        "../../admin/config.ts"
+      ]
+    }
+  },
+  "exclude": [
+    "dist",
+    "build",
+    "node_modules",
+    ".eslintrc.js",
+    "dist/**/*.js",
+    "**/dist/**/*.js"
+  ],
+  "include": [
+    "./**/*.ts"
+  ],
+  "references": []
+}
