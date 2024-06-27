@@ -110,11 +110,14 @@ function Posts() {
         <p>Please insert a valid access token: </p>
         <div className="field-type email">
           <input
+            id="field-token"
             className="field-type__wrap"
             value={token}
             onChange={evt => setToken(evt.target.value)}
           />
-          <Button onClick={onSubmitHandler}>Add Access Token</Button>
+          <Button id="form-token" onClick={onSubmitHandler}>
+            Add Access Token
+          </Button>
         </div>
       </form>
     )

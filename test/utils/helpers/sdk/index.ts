@@ -1,5 +1,4 @@
-import type { PaginatedDocs, SendEmailOptions } from 'payload'
-
+import { PaginatedDocs } from 'payload/database'
 import type {
   CreateArgs,
   DeleteArgs,
@@ -10,6 +9,7 @@ import type {
   UpdateArgs,
   UpdateGlobalArgs,
 } from './types.js'
+import { SendEmailOptions } from 'payload/types'
 
 type Args = {
   serverURL: string
@@ -30,7 +30,7 @@ export class PayloadTestSDK<TGeneratedTypes extends GeneratedTypes<TGeneratedTyp
         args,
         operation,
       }),
-    }).then((res) => res.json())
+    }).then(res => res.json())
 
     if (reduceJSON) return reduceJSON<T>(json)
 

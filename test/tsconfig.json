@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "noEmit": true,
-    "rootDir": ".",
+    "rootDir": "../",
     "declaration": true,
     "declarationMap": true,
     "target": "esnext",
@@ -53,6 +53,9 @@
       // "@payload-config": [
       //   "./test/fields/config.ts"
       // ]
+      "@payload-config": [
+        "../../admin/config.ts"
+      ]
     }
   },
   "exclude": [
@@ -64,7 +67,7 @@
     "**/dist/**/*.js"
   ],
   "include": [
-    "./**/*.ts",
+    "./**/*.ts"
   ],
   "references": []
 }
