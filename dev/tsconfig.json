@@ -9,7 +9,7 @@
       ],
       "@payload-config": [
         "./src/payload.config.ts"
-      ]
+      ],
     },
     "baseUrl": ".",
     "lib": [

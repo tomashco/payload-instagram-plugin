@@ -16,7 +16,7 @@
     "Instagram"
   ],
   "scripts": {
-    "dev": "cd dev && cross-env NODE_OPTIONS=--no-deprecation next dev --turbo",
+    "dev": "cd dev && cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_DROP_DATABASE='true' next dev --turbo",
     "build": "tsc",
     "test": "cd test && jest --config=./jest.config.js",
     "test:e2e": "cross-env NODE_OPTIONS=--no-deprecation NODE_NO_WARNINGS=1 tsx ./test/runE2E.ts",
@@ -52,7 +52,7 @@
     "@typescript-eslint/parser": "5.12.1",
     "comment-json": "^4.2.3",
     "cross-env": "^7.0.3",
-    "dotenv": "^8.2.0",
+    "dotenv": "^8.6.0",
     "eslint": "^8.19.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^8.5.0",

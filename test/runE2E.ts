@@ -13,7 +13,8 @@ shelljs.env.DISABLE_LOGGING = 'true'
 const playwrightBin = path.resolve(dirname, '../node_modules/.bin/playwright')
 
 const testRunCodes: { code: number; suiteName: string }[] = []
-const { _: args, bail, part } = minimist(process.argv.slice(2))
+const { _: args, bail, part, ui } = minimist(process.argv.slice(2))
+
 const suiteName = args[0]
 
 // Run all
@@ -72,7 +73,7 @@ function executePlaywright(suitePath: string, bail = false) {
     `${bail ? 'playwright.bail.config.ts' : 'playwright.config.ts'}`,
   )
 
-  const cmd = slash(`${playwrightBin} test ${suitePath} -c ${playwrightCfg}`)
+  const cmd = slash(`${playwrightBin} test ${ui && '--ui'} ${suitePath} -c ${playwrightCfg}`)
   console.log('\n', cmd)
   const { stdout, code } = shelljs.exec(cmd)
   const suite = path.basename(path.dirname(suitePath))

@@ -2,9 +2,9 @@ import type { Plugin } from 'payload/config'
 
 import { onInitExtension } from './onInitExtension'
 import type { PluginTypes } from './types'
-import InstagramPosts from './InstagramPosts'
+import InstagramPosts from './collections/InstagramPosts'
 import { AfterNavLinks } from './components/AfterNavLinks'
-import InstagramPostsView from './InstagramPostsView'
+import InstagramPostsView from './views/InstagramPostsView'
 import { GlobalConfig } from 'payload/types'
 
 export const baseEndpoint = '/api/instagram/list'
@@ -106,6 +106,32 @@ export const instagramPlugin =
 
     config.endpoints = [
       ...(config.endpoints || []),
+      {
+        path: '/authorize',
+        method: 'post',
+        handler: async req => {
+          try {
+            const body = req.json ? await req.json() : {}
+            const { appId, redirectUri } = body
+
+            const test = await fetch(
+              `https://api.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=user_profile,user_media&response_type=code`,
+            )
+            return new Response(
+              JSON.stringify({
+                accessToken: 'test',
+              }),
+              {
+                status: 200,
+              },
+            )
+          } catch (error) {
+            return new Response(JSON.stringify({ message: 'Error refreshing token' }), {
+              status: 500,
+            })
+          }
+        },
+      },
       {
         path: '/apikeys',
         method: 'post',

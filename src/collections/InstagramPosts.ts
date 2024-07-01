@@ -1,5 +1,5 @@
 import { CollectionConfig } from 'payload/types'
-import { childrenEndpoint, mediaEndpoint } from './plugin'
+import { childrenEndpoint, mediaEndpoint } from '../plugin'
 
 // Example Collection - For reference only, this must be added to payload.config.ts to be used.
 const InstagramPosts: CollectionConfig = {

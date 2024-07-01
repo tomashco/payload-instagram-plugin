@@ -8,8 +8,8 @@ import type { GeneratedTypes } from './sdk/types.js'
 
 import { createTestHooks } from './testHooks.js'
 import { getNextJSRootDir } from './getNextJSRootDir.js'
-import { PayloadTestSDK } from './sdk/index.js'
-import startMemoryDB from './startMemoryDB.js'
+import { PayloadTestSDK } from './sdk/index.ts'
+import startMemoryDB from './startMemoryDB.ts'
 import { wait } from 'payload/utilities'
 
 const _filename = fileURLToPath(import.meta.url)
@@ -35,6 +35,7 @@ export async function initPayloadE2ENoConfig<T extends GeneratedTypes<T>>({
 
   const port = 3000
   process.env.PORT = String(port)
+  if (process.env.ACCESS_TOKEN) process.env.USE_ACCESS_TOKEN = process.env.ACCESS_TOKEN
   const serverURL = `http://localhost:${port}`
 
   await startMemoryDB()

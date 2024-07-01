@@ -2,9 +2,8 @@
 import React from 'react'
 
 import { DefaultTemplate } from '@payloadcms/ui/templates/Default'
-// import { RootPage, generatePageMetadata } from '@payloadcms/next/views'
 import { AdminViewComponent } from 'payload/types'
-import InstagramPostsClient from './components/InstagramPostsClient'
+import InstagramPostsClient from '../../components/InstagramPostsClient'
 
 const CustomDefaultView: AdminViewComponent = ({ initPageResult, params, searchParams }) => {
   return (

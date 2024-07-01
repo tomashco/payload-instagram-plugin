@@ -27,7 +27,7 @@ export default buildConfig({
   },
   plugins: [instagramPlugin({ enabled: true })],
   db: mongooseAdapter({
-    url: process.env.DATABASE_URI || '',
+    url: 'mongodb://127.0.0.1/payloadtests',
   }),
   sharp,
   onInit: async payload => {
@@ -38,5 +38,17 @@ export default buildConfig({
         password: devUser.password,
       },
     })
+    if (process.env.USE_ACCESS_TOKEN)
+      await payload.updateGlobal({
+        slug: 'apikeys',
+        data: {
+          refreshToken: process.env.USE_ACCESS_TOKEN,
+          updatedAt: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+        },
+        context: {
+          bypass: true,
+        },
+      })
   },
 })

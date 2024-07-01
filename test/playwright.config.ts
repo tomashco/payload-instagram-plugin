@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-dotenv.config({ path: path.resolve(dirname, 'test.env') })
+dotenv.config({ path: path.resolve(dirname, '../.env') })
 
 export const TEST_TIMEOUT_LONG = 480000 // 8 minutes - used as timeOut for the beforeAll
 export const TEST_TIMEOUT = 120000

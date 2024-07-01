@@ -5,6 +5,9 @@ dev/pnpm-lock.yaml
 
 .vscode
 
+# Testing
+test-results
+
 # Created by https://www.gitignore.io/api/node,macos,windows,webstorm,sublimetext,visualstudiocode
 
 ### macOS ###
@@ -99,7 +102,6 @@ typings/
 
 # dotenv environment variables file
 .env
-
 
 ### SublimeText ###
 # cache files for sublime text
