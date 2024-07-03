@@ -8,6 +8,9 @@ dev/pnpm-lock.yaml
 # Testing
 test-results
 
+# certificates
+**/certificates
+
 # Created by https://www.gitignore.io/api/node,macos,windows,webstorm,sublimetext,visualstudiocode
 
 ### macOS ###

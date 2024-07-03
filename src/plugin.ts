@@ -9,13 +9,46 @@ import { GlobalConfig } from 'payload/types'
 
 export const baseEndpoint = '/api/instagram/list'
 export const addAccessTokenEndpoint = '/api/apikeys'
+export const addAppIdEndpoint = '/api/instagram/authorize'
 export const childrenEndpoint = '/api/instagram/children'
 export const mediaEndpoint = '/api/instagram/media'
 export const instagramCollectionEndpoint = '/api/instagram-posts'
+export const getAccessToken = 'https://api.instagram.com/oauth/access_token'
 
 export const instagramPlugin =
   (pluginOptions: PluginTypes): Plugin =>
   incomingConfig => {
+    const InstagramConfig: GlobalConfig = {
+      slug: 'instagramConfig',
+      admin: {
+        hidden: true,
+        hideAPIURL: true,
+      },
+      access: {
+        read: ({ req }) => !req.user,
+        update: ({ req }) => !req.user && !req.context.bypass,
+      },
+      fields: [
+        {
+          type: 'text',
+          name: 'appId',
+          hidden: true,
+          access: {
+            read: () => false,
+            update: () => false,
+          },
+        },
+        {
+          type: 'text',
+          name: 'appSecret',
+          hidden: true,
+          access: {
+            read: () => false,
+            update: () => false,
+          },
+        },
+      ],
+    }
     const ApiKeys: GlobalConfig = {
       slug: 'apikeys',
       admin: {
@@ -107,24 +140,85 @@ export const instagramPlugin =
     config.endpoints = [
       ...(config.endpoints || []),
       {
-        path: '/authorize',
+        path: '/instagram/authorize',
         method: 'post',
         handler: async req => {
           try {
             const body = req.json ? await req.json() : {}
-            const { appId, redirectUri } = body
+            const { appId, appSecret } = body
 
-            const test = await fetch(
-              `https://api.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=user_profile,user_media&response_type=code`,
-            )
-            return new Response(
-              JSON.stringify({
-                accessToken: 'test',
-              }),
-              {
-                status: 200,
+            req.payload.updateGlobal({
+              slug: 'instagramConfig',
+              data: {
+                appId,
+                appSecret,
               },
-            )
+              context: {
+                bypass: true,
+              },
+            })
+
+            return new Response(JSON.stringify({ message: 'Configuration added' }), {
+              status: 200,
+            })
+          } catch (error) {
+            return new Response(JSON.stringify({ message: 'Error refreshing token' }), {
+              status: 500,
+            })
+          }
+        },
+      },
+      {
+        path: '/instagram/authorize',
+        method: 'get',
+        handler: async req => {
+          const baseUrl =
+            req.host === 'localhost' ? `${req.origin}:${process.env.PORT || 3000}` : req.origin
+          try {
+            const { code } = req.query
+            const { appId, appSecret } = await req.payload.findGlobal({
+              slug: 'instagramConfig',
+              overrideAccess: true,
+              showHiddenFields: true,
+            })
+
+            const formData = new FormData()
+            formData.append('client_id', appId as string)
+            formData.append('client_secret', appSecret as string)
+            formData.append('grant_type', 'authorization_code')
+            formData.append('redirect_uri', `${baseUrl}/api/instagram/authorize`)
+            formData.append('code', code as string)
+
+            const response = await fetch(getAccessToken, {
+              method: 'POST',
+              body: formData,
+            }).then(res => {
+              return res.json()
+            })
+
+            if (!response.access_token) {
+              throw new Error('Invalid token')
+            }
+
+            const { access_token } = await fetch(
+              `https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=${appSecret}&access_token=${response.access_token}`,
+            ).then(res => res.json())
+
+            if (!access_token) {
+              throw new Error('Error refreshing token')
+            }
+
+            req.payload.updateGlobal({
+              slug: 'apikeys',
+              data: {
+                refreshToken: access_token || '',
+              },
+              context: {
+                bypass: true,
+              },
+            })
+
+            return Response.redirect(`${baseUrl}/admin`, 302)
           } catch (error) {
             return new Response(JSON.stringify({ message: 'Error refreshing token' }), {
               status: 500,
@@ -258,7 +352,7 @@ export const instagramPlugin =
       },
     ]
 
-    config.globals = [...(config.globals || []), ApiKeys]
+    config.globals = [...(config.globals || []), ApiKeys, InstagramConfig]
 
     config.hooks = {
       ...(config.hooks || {}),

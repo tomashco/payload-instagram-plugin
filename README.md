@@ -2,18 +2,17 @@
 
 This plugin allows you to use an instagram connected feed as content to be shown inside payload blog.
 
-!!!important: starting from 0.0.8 the access token will be stored to db to allow to refresh it automatically. Read the updated setup guide to learn how to configure the plugin.
+🔥 important: starting from 0.0.8 the access token will be stored to db to allow to refresh it automatically. Read the updated setup guide to learn how to configure the plugin.
 
 ## How to setup
-1. Get an access token to connect to [Instagram Basic Display API](https://developers.facebook.com/docs/instagram-basic-display-api):
-[This tutorial](https://developers.facebook.com/docs/instagram-basic-display-api/getting-started) shows you:
-- how to create a facebook developer app;
-- how to add tester users (i.e. the account from where you will get the content);
-- how to retrieve the access token (it's important to get the long lived token with an expiration of 60 days).
+1. create a facebook developer app following [this tutorial](https://developers.facebook.com/docs/instagram-basic-display-api/getting-started), up to point 3. 
 
-2. Add the access token in the Instagram Plugin page inside the admin panel.
+🔥 Important:
+- As ```redirect_uri``` set: https://yourBaseUrl/api/instagram/authorize. Change "yourBaseUrl" with your app url. If you are using this from localhost, run your payload instance with ```--experimental-https``` flagged, as https is needed for the instagram token request!
+- as revoke authorization set: https://yourBaseUrl/api/instagram/unauthorize
+- as request to delete data set: https://yourBaseUrl/api/instagram/delete
 
-3. Add the plugin to the payload.config.ts, together with all your config, as follows:
+2. Add the plugin to the payload.config.ts, together with all your config, as follows:
 
 ```
 import { instagramPlugin } from 'instagram-payload-plugin'

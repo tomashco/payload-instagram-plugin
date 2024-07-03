@@ -5,7 +5,7 @@ import { Button } from '@payloadcms/ui/elements/Button'
 import { baseEndpoint, childrenEndpoint } from '../../plugin'
 import InstagramPostsApi from '../../api/hooks/useInstagramPosts'
 import InstagramCollectionApi from '../../api/hooks/useInstagramCollection'
-import TokenApi from '../../api/hooks/useToken'
+import ConfigInstagramApi from '../../api/hooks/useConfigInstagram'
 import { PostType } from '../../types'
 
 const queryClient = new QueryClient()
@@ -17,9 +17,12 @@ const LoadingCards = () =>
 
 function ManagePosts() {
   const [endpoint, setEndpoint] = React.useState<string>(baseEndpoint)
-  const [token, setToken] = React.useState<string>('')
+  const [appId, setAppId] = React.useState<string>('')
+  const [appSecret, setAppSecret] = React.useState<string>('')
   const [first, setFirst] = React.useState<string>('')
-  const { addAccessToken } = TokenApi({ endpoint, queryClient, setToken })
+
+  // const { addAccessToken } = TokenApi({ endpoint, queryClient, setToken })
+  const { addAppId } = ConfigInstagramApi({ appId, setAppId, setAppSecret })
   const { isPending, error, response, isFetching, isLoading } = InstagramPostsApi({ endpoint })
   const { instagramCollection, mutateInstagramCollection } = InstagramCollectionApi({ queryClient })
 
@@ -32,7 +35,7 @@ function ManagePosts() {
 
   const onSubmitHandler = async (evt: any) => {
     evt.preventDefault()
-    await addAccessToken({ accessToken: token })
+    await addAppId({ appId, appSecret })
   }
 
   if (isLoading) return <p>Loading...</p>
@@ -40,16 +43,24 @@ function ManagePosts() {
   if (error?.message === '403')
     return (
       <form onSubmit={onSubmitHandler}>
-        <p>Please insert a valid access token: </p>
+        <p>Please insert your Instagram configuration:</p>
         <div className="field-type email">
+          <p>App ID:</p>
           <input
-            id="field-token"
+            id="field-appId"
             className="field-type__wrap"
-            value={token}
-            onChange={evt => setToken(evt.target.value)}
+            value={appId}
+            onChange={evt => setAppId(evt.target.value)}
+          />
+          <p style={{ marginTop: '2rem' }}>App Secret:</p>
+          <input
+            id="field-appSecret"
+            className="field-type__wrap"
+            value={appSecret}
+            onChange={evt => setAppSecret(evt.target.value)}
           />
           <Button id="form-token" onClick={onSubmitHandler}>
-            Add Access Token
+            Configure Instagram Plugin
           </Button>
         </div>
       </form>
