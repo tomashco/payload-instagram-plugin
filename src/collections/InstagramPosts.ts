@@ -1,4 +1,4 @@
-import { CollectionConfig } from 'payload/types'
+import { CollectionConfig } from 'payload'
 import { childrenEndpoint, mediaEndpoint } from '../plugin'
 
 // Example Collection - For reference only, this must be added to payload.config.ts to be used.
