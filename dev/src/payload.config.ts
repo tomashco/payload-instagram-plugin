@@ -1,4 +1,3 @@
-import { buildConfig } from 'payload/config'
 import path from 'path'
 import Users from './collections/Users'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
@@ -7,6 +6,7 @@ import { instagramPlugin } from '../../src/index'
 import { devUser } from '../../test/utils/credentials'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
+import { buildConfig } from 'payload'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)

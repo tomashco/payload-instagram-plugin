@@ -1,11 +1,11 @@
-import type { Plugin } from 'payload/config'
+import type { Plugin } from 'payload'
 
 import { onInitExtension } from './onInitExtension'
 import type { PluginTypes } from './types'
 import InstagramPosts from './collections/InstagramPosts'
 import { AfterNavLinks } from './components/AfterNavLinks'
 import InstagramPostsView from './views/InstagramPostsView'
-import { GlobalConfig } from 'payload/types'
+import { GlobalConfig } from 'payload'
 
 export const baseEndpoint = '/api/instagram/list'
 export const addAccessTokenEndpoint = '/api/apikeys'

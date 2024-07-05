@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Button } from '@payloadcms/ui/elements/Button'
+import { Button } from '@payloadcms/ui'
 import { baseEndpoint, childrenEndpoint } from '../../plugin'
 import InstagramPostsApi from '../../api/hooks/useInstagramPosts'
 import InstagramCollectionApi from '../../api/hooks/useInstagramCollection'

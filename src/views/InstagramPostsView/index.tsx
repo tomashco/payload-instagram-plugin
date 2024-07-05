@@ -1,9 +1,9 @@
 'use server'
 import React from 'react'
 
-import { DefaultTemplate } from '@payloadcms/ui/templates/Default'
-import { AdminViewComponent } from 'payload/types'
+import { DefaultTemplate } from '@payloadcms/next/templates'
 import InstagramPostsClient from '../../components/InstagramPostsClient'
+import { AdminViewComponent } from 'payload'
 
 const CustomDefaultView: AdminViewComponent = ({ initPageResult, params, searchParams }) => {
   return (
