@@ -4,7 +4,7 @@ import { expect } from '@playwright/test'
 
 import { devUser } from './credentials.js'
 import { POLL_TOPASS_TIMEOUT } from '../playwright.config.js'
-import { Config, defaults } from 'payload/config'
+import { Config, defaults } from 'payload'
 import { wait } from 'payload/utilities'
 
 type FirstRegisterArgs = {

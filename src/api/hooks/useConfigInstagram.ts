@@ -25,7 +25,7 @@ const useConfigInstagram = ({ appId, setAppId, setAppSecret }: useConfigInstagra
       }),
     onSuccess: _res => {
       const redirectUri = `${window.location.origin}/api/instagram/authorize`
-      const authorizeEndpoint = `https://api.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=user_profile,user_media&response_type=code`
+      const authorizeEndpoint = `https://api.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=instagram_business_basic&response_type=code`
       router.push(authorizeEndpoint)
       setAppId('')
       setAppSecret('')
@@ -41,3 +41,5 @@ const useConfigInstagram = ({ appId, setAppId, setAppSecret }: useConfigInstagra
 }
 
 export default useConfigInstagram
+
+

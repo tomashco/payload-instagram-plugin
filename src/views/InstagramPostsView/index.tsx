@@ -1,11 +1,11 @@
 'use server'
 import React from 'react'
 
-import { DefaultTemplate } from '@payloadcms/next/templates'
+import {DefaultTemplate} from '@payloadcms/next/templates'
 import InstagramPostsClient from '../../components/InstagramPostsClient'
-import { AdminViewComponent } from 'payload'
+import {AdminViewComponent, PayloadServerReactComponent} from 'payload'
 
-const CustomDefaultView: AdminViewComponent = ({ initPageResult, params, searchParams }) => {
+const CustomDefaultView: PayloadServerReactComponent<AdminViewComponent> = ({initPageResult, params, searchParams}) => {
   return (
     <DefaultTemplate
       payload={initPageResult.req.payload}
@@ -13,7 +13,7 @@ const CustomDefaultView: AdminViewComponent = ({ initPageResult, params, searchP
       i18n={initPageResult.req.i18n}
       visibleEntities={initPageResult.visibleEntities}
     >
-      <InstagramPostsClient />
+      <InstagramPostsClient/>
     </DefaultTemplate>
   )
 }

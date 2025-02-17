@@ -1,17 +1,19 @@
 'use client'
 
-import type { SanitizedConfig } from 'payload'
+import type {PayloadClientReactComponent, SanitizedConfig} from 'payload'
 
-import { useConfig } from '@payloadcms/ui'
+import {useConfig} from '@payloadcms/ui'
 import Link from 'next/link.js'
 
 import React from 'react'
 
 const baseClass = 'after-nav-links'
 
-export const AfterNavLinks: SanitizedConfig['admin']['components']['afterNavLinks'][0] = () => {
+export const AfterNavLinks: PayloadClientReactComponent<SanitizedConfig['admin']['components']['afterNavLinks'][0]> = () => {
   const {
-    routes: { admin: adminRoute },
+    config: {
+      routes: {admin: adminRoute},
+    }
   } = useConfig()
 
   return (
@@ -23,8 +25,8 @@ export const AfterNavLinks: SanitizedConfig['admin']['components']['afterNavLink
         gap: 'calc(var(--base) / 4)',
       }}
     >
-      <h4 className="nav__link" style={{ margin: 0 }}>
-        <Link href={`${adminRoute}/instagram-posts-view`} style={{ textDecoration: 'none' }}>
+      <h4 className="nav__link" style={{margin: 0}}>
+        <Link href={`${adminRoute}/instagram-posts-view`} style={{textDecoration: 'none'}}>
           Instagram Posts
         </Link>
       </h4>
