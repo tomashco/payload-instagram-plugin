@@ -3,8 +3,6 @@ import type { Plugin } from 'payload'
 import { onInitExtension } from './onInitExtension'
 import type { PluginTypes } from './types'
 import InstagramPosts from './collections/InstagramPosts'
-import { AfterNavLinks } from './components/AfterNavLinks'
-import InstagramPostsView from './views/InstagramPostsView'
 import { GlobalConfig } from 'payload'
 
 export const baseEndpoint = '/api/instagram/list'
@@ -89,7 +87,7 @@ export const instagramPlugin =
             })
             req.payload.logger.warn('token updated succesfully')
           } catch (error) {
-            req.payload.logger.error('Error refreshing token', error)
+            req.payload.logger.error(error as Error, 'Error refreshing token')
           } finally {
             return false
           }
@@ -120,10 +118,13 @@ export const instagramPlugin =
     config.admin = {
       ...(config.admin || {}),
       components: {
-        afterNavLinks: [AfterNavLinks],
+        afterNavLinks: [
+          'payload-instagram-plugin/dist/components/AfterNavLinks/index.js#AfterNavLinks',
+        ],
         views: {
           instagramPosts: {
-            Component: InstagramPostsView,
+            Component:
+              'payload-instagram-plugin/dist/views/InstagramPostsView/index.js',
             path: '/instagram-posts-view',
           },
         },

@@ -1,16 +1,16 @@
 'use server'
 import React from 'react'
 
+import type { AdminViewServerProps } from 'payload'
+
 import { DefaultTemplate } from '@payloadcms/next/templates'
 import InstagramPostsClient from '../../components/InstagramPostsClient'
-import { AdminViewComponent } from 'payload'
 
-const CustomDefaultView: AdminViewComponent = ({ initPageResult, params, searchParams }) => {
+const CustomDefaultView: React.FC<AdminViewServerProps> = ({ initPageResult }) => {
   return (
     <DefaultTemplate
-      payload={initPageResult.req.payload}
-      config={initPageResult.req.payload.config}
       i18n={initPageResult.req.i18n}
+      payload={initPageResult.req.payload}
       visibleEntities={initPageResult.visibleEntities}
     >
       <InstagramPostsClient />

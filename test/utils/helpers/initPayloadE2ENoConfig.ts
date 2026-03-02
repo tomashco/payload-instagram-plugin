@@ -10,7 +10,7 @@ import { createTestHooks } from './testHooks.js'
 import { getNextJSRootDir } from './getNextJSRootDir.js'
 import { PayloadTestSDK } from './sdk/index.ts'
 import startMemoryDB from './startMemoryDB.ts'
-import { wait } from 'payload/utilities'
+import { wait } from 'payload'
 
 const _filename = fileURLToPath(import.meta.url)
 const _dirname = dirname(_filename)

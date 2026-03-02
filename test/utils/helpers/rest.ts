@@ -3,9 +3,7 @@
 import qs from 'qs'
 
 import { devUser } from '../credentials.js'
-import { Where } from 'payload/types'
-import { PaginatedDocs } from 'payload/database'
-import { Config } from 'payload/config'
+import { Where, PaginatedDocs, Config } from 'payload'
 
 type Args = {
   defaultSlug: string

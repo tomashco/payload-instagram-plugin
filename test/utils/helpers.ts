@@ -4,8 +4,7 @@ import { expect } from '@playwright/test'
 
 import { devUser } from './credentials.js'
 import { POLL_TOPASS_TIMEOUT } from '../playwright.config.js'
-import { Config, defaults } from 'payload/config'
-import { wait } from 'payload/utilities'
+import { Config, defaults, wait } from 'payload'
 
 type FirstRegisterArgs = {
   customAdminRoutes?: Config['admin']['routes']

@@ -1,4 +1,4 @@
-import { PaginatedDocs } from 'payload/database'
+import { PaginatedDocs } from 'payload'
 import type {
   CreateArgs,
   DeleteArgs,
@@ -9,7 +9,7 @@ import type {
   UpdateArgs,
   UpdateGlobalArgs,
 } from './types.js'
-import { SendEmailOptions } from 'payload/types'
+import { SendEmailOptions } from 'payload'
 
 type Args = {
   serverURL: string

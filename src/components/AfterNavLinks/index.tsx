@@ -1,7 +1,5 @@
 'use client'
 
-import type { SanitizedConfig } from 'payload'
-
 import { useConfig } from '@payloadcms/ui'
 import Link from 'next/link.js'
 
@@ -9,10 +7,9 @@ import React from 'react'
 
 const baseClass = 'after-nav-links'
 
-export const AfterNavLinks: SanitizedConfig['admin']['components']['afterNavLinks'][0] = () => {
-  const {
-    routes: { admin: adminRoute },
-  } = useConfig()
+export const AfterNavLinks: React.FC = () => {
+  const { config } = useConfig()
+  const adminRoute = config.routes.admin
 
   return (
     <div
