@@ -4,11 +4,10 @@ import { expect, test } from '@playwright/test'
 import * as path from 'path'
 import { fileURLToPath } from 'url'
 
-import { getAdminRoutes, initPageConsoleErrorCatch } from '../utils/helpers.js'
+import { getAdminRoutes, initPageConsoleErrorCatch, wait } from '../utils/helpers.js'
 import { AdminUrlUtil } from '../utils/helpers/adminUrlUtil.js'
 import { initPayloadE2ENoConfig } from '../utils/helpers/initPayloadE2ENoConfig.js'
 import { TEST_TIMEOUT_LONG } from '../playwright.config.js'
-import { wait } from 'payload'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)

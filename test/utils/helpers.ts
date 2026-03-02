@@ -4,7 +4,11 @@ import { expect } from '@playwright/test'
 
 import { devUser } from './credentials.js'
 import { POLL_TOPASS_TIMEOUT } from '../playwright.config.js'
-import { Config, defaults, wait } from 'payload'
+import type { Config } from 'payload'
+import { defaults } from 'payload'
+
+export const wait = (ms: number): Promise<void> =>
+  new Promise(resolve => setTimeout(resolve, ms))
 
 type FirstRegisterArgs = {
   customAdminRoutes?: Config['admin']['routes']
