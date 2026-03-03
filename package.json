@@ -26,7 +26,8 @@
     "generate:types": "cd dev && payload generate:types",
     "lint:fix": "eslint --fix --ext .ts,.tsx src",
     "clean": "rm -rf dist",
-    "prepublishOnly": "pnpm clean && pnpm build"
+    "prepublishOnly": "pnpm clean && pnpm build",
+    "publish": "pnpm prepublishOnly && pnpm publish --access public"
   },
   "author": "tomashco@gmail.com",
   "license": "MIT",
