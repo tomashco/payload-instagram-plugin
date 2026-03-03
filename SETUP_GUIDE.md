@@ -38,33 +38,38 @@ The Instagram API only works with **Business** or **Creator** accounts. Personal
 3. Select **Business** as the app type, then click **Next**.
 4. Enter an app name and contact email, then click **Create App**.
 
-### 3. Add the Instagram Product
+### 3. Add the Instagram Use Case
 
-1. In your app dashboard, click **Add Product** in the left sidebar.
-2. Find **Instagram** and click **Set Up**.
-3. Select **API setup with Instagram Login**.
+1. In your app dashboard, go to **Use cases** in the left sidebar.
+2. Find **Instagram** and click **Customize**.
+3. This will add the Instagram product to your app.
 
 ### 4. Note Your App Credentials
 
-1. In the left sidebar, go to **Instagram > Basic Display** (or **Instagram > Settings**).
-2. Note the **Instagram App ID** and **Instagram App Secret**.
-
-> **Important:** Use the Instagram App ID and Secret shown under the Instagram product settings, **not** the Facebook App ID/Secret shown at the top of the dashboard.
+1. In the left sidebar, go to **App Settings > Basic**.
+2. Note the **App ID** and **App Secret**.
 
 ### 5. Configure Redirect URI
 
-1. Under the Instagram product settings, find **Valid OAuth Redirect URIs**.
-2. Add the following URI:
+The redirect URI must be configured inside the **Instagram Business Login** settings:
+
+1. Go to **Use cases > Instagram > Customize**.
+2. Find the section **"Configure Instagram Business Login"** (step 4 in the use case page).
+3. Click on the **Business Login settings** link — this opens the Business Login configuration page.
+4. In the **Valid OAuth Redirect URIs** field, add:
    ```
    https://yourBaseUrl/api/instagram/authorize
    ```
    Replace `yourBaseUrl` with your actual domain (e.g., `https://example.com` or `https://localhost:3000`).
+5. Click **Save**.
 
-3. Optionally, also configure:
+6. Optionally, also configure:
    - **Deauthorize Callback URL:** `https://yourBaseUrl/api/instagram/unauthorize`
    - **Data Deletion Request URL:** `https://yourBaseUrl/api/instagram/delete`
 
 > **HTTPS is required.** Instagram will not accept HTTP redirect URIs. For local development, run your server with `--experimental-https`.
+
+> **Note:** Do NOT configure the redirect URI in the Webhooks section — that is for a different purpose and requires a published app.
 
 ### 6. Add Instagram Testers (Development Mode)
 
