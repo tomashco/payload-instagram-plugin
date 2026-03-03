@@ -76,7 +76,7 @@ export const instagramPlugin =
 
             req.context.bypass = true
 
-            req.payload.updateGlobal({
+            await req.payload.updateGlobal({
               slug: 'apikeys',
               data: {
                 refreshToken: access_token || '',
@@ -148,7 +148,7 @@ export const instagramPlugin =
             const body = req.json ? await req.json() : {}
             const { appId, appSecret } = body
 
-            req.payload.updateGlobal({
+            await req.payload.updateGlobal({
               slug: 'instagramConfig',
               data: {
                 appId,
@@ -209,7 +209,7 @@ export const instagramPlugin =
               throw new Error('Error refreshing token')
             }
 
-            req.payload.updateGlobal({
+            await req.payload.updateGlobal({
               slug: 'apikeys',
               data: {
                 refreshToken: access_token || '',
